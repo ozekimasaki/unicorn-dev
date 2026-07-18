@@ -1,46 +1,26 @@
-# React + Vite + Hono + Cloudflare Workers
+# unicorn-dev
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/vite-react-template)
+A full-stack template for building a React application with TypeScript and Vite, served by a [Hono](https://hono.dev/) backend running on [Cloudflare Workers](https://developers.cloudflare.com/workers/). It provides hot module replacement, ESLint integration, and single-command deployment to Cloudflare's edge network.
 
-This template provides a minimal setup for building a React application with TypeScript and Vite, designed to run on Cloudflare Workers. It features hot module replacement, ESLint integration, and the flexibility of Workers deployments.
+This project is based on the [Cloudflare Vite React template](https://github.com/cloudflare/templates/tree/main/vite-react-template).
 
-![React + TypeScript + Vite + Cloudflare Workers](https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/fc7b4b62-442b-4769-641b-ad4422d74300/public)
+## Features
 
-<!-- dash-content-start -->
+- **React 19** with TypeScript for the frontend (`src/react-app`).
+- **Hono** backend served from a Cloudflare Worker (`src/worker`), exposing a JSON API under `/api/`.
+- **Vite 6** with the `@cloudflare/vite-plugin` for a unified dev server and build.
+- **Hot Module Replacement (HMR)** during development.
+- **ESLint** (flat config) with TypeScript, React Hooks, and React Refresh plugins.
+- **Single-page application** asset handling and **Observability** enabled via `wrangler.json`.
+- A [UnicornStudio](https://www.unicorn.studio/) interactive scene embedded in `index.html`.
 
-🚀 Supercharge your web development with this powerful stack:
+## Requirements
 
-- [**React**](https://react.dev/) - A modern UI library for building interactive interfaces
-- [**Vite**](https://vite.dev/) - Lightning-fast build tooling and development server
-- [**Hono**](https://hono.dev/) - Ultralight, modern backend framework
-- [**Cloudflare Workers**](https://developers.cloudflare.com/workers/) - Edge computing platform for global deployment
+- **Node.js** (a current LTS release is recommended; developed against Node.js 20).
+- **npm** (bundled with Node.js).
+- A **Cloudflare account** and the [Wrangler](https://developers.cloudflare.com/workers/wrangler/) CLI (installed as a dev dependency) for deployment.
 
-### ✨ Key Features
-
-- 🔥 Hot Module Replacement (HMR) for rapid development
-- 📦 TypeScript support out of the box
-- 🛠️ ESLint configuration included
-- ⚡ Zero-config deployment to Cloudflare's global network
-- 🎯 API routes with Hono's elegant routing
-- 🔄 Full-stack development setup
-- 🔎 Built-in Observability to monitor your Worker
-
-Get started in minutes with local development or deploy directly via the Cloudflare dashboard. Perfect for building modern, performant web applications at the edge.
-
-<!-- dash-content-end -->
-
-## Getting Started
-
-To start a new project with this template, run:
-
-```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/vite-react-template
-```
-
-A live deployment of this template is available at:
-[https://react-vite-template.templates.workers.dev](https://react-vite-template.templates.workers.dev)
-
-## Development
+## Installation
 
 Install dependencies:
 
@@ -48,43 +28,66 @@ Install dependencies:
 npm install
 ```
 
-Start the development server with:
+## Usage
+
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
-Your application will be available at [http://localhost:5173](http://localhost:5173).
+The application is served at [http://localhost:5173](http://localhost:5173) by default. The Worker API is available under `/api/` (for example, `GET /api/` returns `{ "name": "Cloudflare" }`).
 
-## Production
+## Development Commands
 
-Build your project for production:
+All commands are defined in `package.json`:
 
-```bash
-npm run build
-```
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the Vite dev server with HMR. |
+| `npm run build` | Type-check the project (`tsc -b`) and build for production with Vite. |
+| `npm run preview` | Build the project and preview the production output locally. |
+| `npm run lint` | Run ESLint across the project. |
+| `npm run check` | Type-check, build, and run `wrangler deploy --dry-run` to validate the deploy. |
+| `npm run cf-typegen` | Regenerate Worker binding types (`worker-configuration.d.ts`) via `wrangler types`. |
+| `npm run deploy` | Deploy the Worker and assets to Cloudflare (`wrangler deploy`). |
 
-Preview your build locally:
-
-```bash
-npm run preview
-```
-
-Deploy your project to Cloudflare Workers:
+To deploy to Cloudflare Workers:
 
 ```bash
 npm run build && npm run deploy
 ```
 
-Monitor your workers:
+Monitor a deployed Worker's logs:
 
 ```bash
 npx wrangler tail
 ```
 
-## Additional Resources
+## Project Structure
 
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
-- [Vite Documentation](https://vitejs.dev/guide/)
-- [React Documentation](https://reactjs.org/)
-- [Hono Documentation](https://hono.dev/)
+```
+.
+├── index.html                 # HTML entry (embeds a UnicornStudio scene)
+├── src/
+│   ├── react-app/             # React frontend
+│   │   ├── main.tsx           # React entry point
+│   │   ├── App.tsx            # Root component (counter + /api/ demo)
+│   │   ├── assets/            # SVG logos
+│   │   └── *.css              # Styles
+│   └── worker/
+│       └── index.ts           # Hono app / Cloudflare Worker entry
+├── public/                    # Static assets served as-is
+├── vite.config.ts             # Vite config (React + Cloudflare plugins)
+├── wrangler.json              # Cloudflare Workers configuration
+├── worker-configuration.d.ts  # Generated Worker binding types
+├── eslint.config.js           # ESLint flat config
+├── tsconfig*.json             # TypeScript project references (app / node / worker)
+└── package.json
+```
+
+TypeScript is split into project references: `tsconfig.app.json` (React app), `tsconfig.worker.json` (Worker), and `tsconfig.node.json` (build tooling such as `vite.config.ts`).
+
+## License
+
+No license file is present, and `package.json` is marked `"private": true`. No open-source license is currently specified for this repository.
